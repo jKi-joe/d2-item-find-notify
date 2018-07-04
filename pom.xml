@@ -5,7 +5,7 @@
 
     <groupId>net.joe</groupId>
     <artifactId>item-find-notifier</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <name>item-find-notifier</name>

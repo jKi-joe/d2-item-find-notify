@@ -82,7 +82,7 @@ public class ItemServiceTest {
         Item created = itemService.create(mage1);
         assertFalse(Strings.isNullOrEmpty(created.getId()));
 
-        Item foundItem = itemService.findItemByNameAndTimestamp(mage1.getName(), mage1.getTimestamp());
+        Item foundItem = itemService.findItemByTimestamp(mage1.getTimestamp());
         assertEq(foundItem, mage1);
         assertEquals(created.getId(), foundItem.getId());
     }

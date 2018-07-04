@@ -23,9 +23,6 @@ public class ItemDto {
     @Id
     private String id;
 
-    @Lob
-    private String name;
-
     private Timestamp timestamp;
 
 }

@@ -76,7 +76,7 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
                                 List<Item> items = itemParser.parseItems(applicationProperties.getItemFileDirectory() + file.getName());
                                 items
                                         .stream()
-                                        .filter(item -> itemService.findItemByNameAndTimestamp(item.getName(), item.getTimestamp()) == null)
+                                        .filter(item -> itemService.findItemByTimestamp(item.getTimestamp()) == null)
                                         .forEach(item -> {
                                             log.info(String.format("New item: '%s' found at '%s'", item.getName(), item.getTimestamp()));
                                             itemService.create(item);
