@@ -11,6 +11,7 @@ Get notified on discord about anything that your kolbot bot finds.
 1. [Download the jar file and the properties file](https://github.com/jKi-joe/d2-item-find-notify/releases)
 1. Make sure jar + properties file are in same folder
 1. [Set up a web hook](https://support.discordapp.com/hc/en-us/articles/228383668-Intro-to-Webhooks)
+    * Only the section `MAKING A WEBHOOK` is relevant
 1. Open the property file
     1. Set the property to your kolbot logs folder
          * e.g. `net.joe.itemFileDirectory=C:\\D2-Bot\\kolbot\\trunk\\d2bs\\kolbot\\logs`
