@@ -13,9 +13,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -25,8 +30,11 @@ import java.time.LocalTime;
 
 @RunWith(SpringRunner.class)
 @Import(ApplicationConfiguration.class)
-@DataJpaTest
-@Ignore
+@Transactional
+@AutoConfigureCache
+@AutoConfigureDataJpa
+@AutoConfigureTestDatabase
+@AutoConfigureTestEntityManager
 public class ItemServiceTest {
 
     @Autowired
@@ -97,7 +105,6 @@ public class ItemServiceTest {
     }
 
     private void assertEq(final Item item, final Item created) {
-        assertEquals(item.getName(), created.getName());
         assertEquals(item.getTimestamp(), created.getTimestamp());
     }
 }
