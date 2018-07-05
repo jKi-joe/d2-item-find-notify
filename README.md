@@ -15,7 +15,7 @@ Get notified on discord about anything that your kolbot bot finds.
 1. Open the property file
     1. Set the property to your kolbot logs folder
          * e.g. `net.joe.itemFileDirectory=C:/D2-Bot/kolbot/trunk/d2bs/kolbot/logs/`
-         * **Please bote there has to be a slash at the end**
+         * **Please note there has to be a slash at the end**
     1. Set the property to your discord webhook
          * e.g. `net.joe.discordWebhookUrl=https://discordapp.com/api/webhooks/YOUR_ID/YOUR_SECRET`
     1. Add filters if you like (see file comments for more info)
