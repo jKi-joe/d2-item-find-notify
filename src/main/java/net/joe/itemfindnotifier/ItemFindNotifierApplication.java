@@ -65,6 +65,7 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
                     StandardWatchEventKinds.ENTRY_CREATE,
                     StandardWatchEventKinds.ENTRY_MODIFY);
             WatchKey watchKey;
+            List<String> filters = applicationProperties.getFilters();
             log.info("ItemFindNotify has started successfully");
             log.info(String.format("Watching directory '%s' for file '%s' now", applicationProperties.getItemFileDirectory(), applicationProperties.getItemFileName()));
             while ((watchKey = watchService.take()) != null) {
@@ -78,7 +79,24 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
                                 List<Item> items = itemParser.parseItems(applicationProperties.getItemFileDirectory() + file.getName());
                                 items
                                         .stream()
-                                        .filter(item -> itemService.findItemByTimestampAndFoundBy(item.getTimestamp(), item.getFoundBy()) == null)
+                                        .filter(item -> {
+                                            if (itemService.findItemByTimestampAndFoundBy(item.getTimestamp(), item.getFoundBy()) == null) {
+                                                return true;
+                                            } else {
+                                                log.info(String.format("No notification sent for item '%s' found by '%s' at '%s' sent, since it is already in DB", item.getName(), item.getFoundBy(), item.getTimestamp()));
+                                                return false;
+                                            }
+
+                                        })
+                                        .filter(item -> {
+                                            for (String filter : filters) {
+                                                if (item.getName().contains(filter)) {
+                                                    log.info(String.format("No notification sent for item '%s'  was filtered since filter '%s' applies", item.getName(), filter));
+                                                    return false;
+                                                }
+                                            }
+                                            return true;
+                                        })
                                         .forEach(item -> {
                                             log.info(String.format("New item: '%s' found at '%s'", item.getName(), item.getTimestamp()));
                                             itemService.create(item);

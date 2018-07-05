@@ -20,4 +20,6 @@ public class ApplicationProperties {
 
     private List<String> messagePrefixes;
 
+    private List<String> filters;
+
 }
