@@ -65,6 +65,8 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
                     StandardWatchEventKinds.ENTRY_CREATE,
                     StandardWatchEventKinds.ENTRY_MODIFY);
             WatchKey watchKey;
+            log.info("ItemFindNotify has started successfully");
+            log.info(String.format("Watching directory '%s' for file '%s' now", applicationProperties.getItemFileDirectory(), applicationProperties.getItemFileName()));
             while ((watchKey = watchService.take()) != null) {
                 watchKey.pollEvents().forEach(watchEvent -> {
                     Object context = watchEvent.context();
