@@ -33,17 +33,24 @@ public class ItemParserTest {
     private ItemParser itemParser;
 
     @Test
-    public void readItem() throws IOException {
+    public void readItems() throws IOException {
         List<Item> items = itemParser.parseItems(resourceLoader.getResource("ItemLog.txt").getURI().getPath());
         assertFalse(items.isEmpty());
-        Item magefist = Item.builder()
+        Item magefist1 = Item.builder()
                 .name("(unique) Magefist (75) | Light Gauntlets | Defense: 25 | Durability: 11 of 18 | Required Strength: 45 | Required Level: 23 | +1 to Fire Skills | +20% Faster Cast Rate | Adds 1-6 fire damage | +25% Enhanced Defense | +10 Defense | Regenerate Mana 25%")
+                .foundBy("Mf Soso")
+                .timestamp(Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 25, 18))))
+                .build();
+        Item magefist2 = Item.builder()
+                .name("(unique) Magefist (75) | Light Gauntlets | Defense: 25 | Durability: 11 of 18 | Required Strength: 45 | Required Level: 23 | +1 to Fire Skills | +20% Faster Cast Rate | Adds 1-6 fire damage | +25% Enhanced Defense | +10 Defense | Regenerate Mana 25%")
+                .foundBy("MissGoodLuck")
                 .timestamp(Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 25, 18))))
                 .build();
         Item fRuby = Item.builder()
                 .name("(normal) Flawless Ruby (1) | Can be Inserted into Socketed Items |  | Weapons: Adds 10-16 fire damage | Armor: +31 to Life | Helms: +31 to Life | Shields: Fire Resist +28% |  | Required Level: 15 {Cubing 2}")
+                .foundBy("Mf Soso")
                 .timestamp(Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 30, 45))))
                 .build();
-        assertThat(items, containsInAnyOrder(magefist, fRuby));
+        assertThat(items, containsInAnyOrder(magefist1, magefist2, fRuby));
     }
 }

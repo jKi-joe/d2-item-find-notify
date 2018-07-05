@@ -31,14 +31,15 @@ public class ItemService {
         return itemRepository.findAll().isEmpty();
     }
 
-    public Item findItemByTimestamp(Timestamp timestamp) {
-        List<ItemDto> allByNameAndTimestamp = itemRepository.findAllByTimestamp(timestamp);
-        return allByNameAndTimestamp.isEmpty() ? null : convert(allByNameAndTimestamp.get(0));
+    public Item findItemByTimestampAndFoundBy(Timestamp timestamp, String foundBy) {
+        List<ItemDto> itemsByTimestampAndFoundBy = itemRepository.findAllByTimestampAndFoundBy(timestamp, foundBy);
+        return itemsByTimestampAndFoundBy.isEmpty() ? null : convert(itemsByTimestampAndFoundBy.get(0));
     }
 
     private ItemDto convert(final Item item) {
         return ItemDto.builder()
                 .id(UUID.randomUUID().toString())
+                .foundBy(item.getFoundBy())
                 .timestamp(item.getTimestamp())
                 .build();
     }
@@ -46,6 +47,7 @@ public class ItemService {
     private Item convert(final ItemDto itemDto) {
         return Item.builder()
                 .id(itemDto.getId())
+                .foundBy(itemDto.getFoundBy())
                 .timestamp(itemDto.getTimestamp())
                 .build();
     }

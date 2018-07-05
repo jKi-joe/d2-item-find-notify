@@ -13,6 +13,6 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<ItemDto, String> {
 
-    List<ItemDto> findAllByTimestamp(Timestamp timestamp);
+    List<ItemDto> findAllByTimestampAndFoundBy(Timestamp timestamp, String foundBy);
 
 }

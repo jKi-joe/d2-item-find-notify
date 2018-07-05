@@ -31,8 +31,11 @@ public class ItemParser  {
         log.debug(String.format("Reading file from path '%s'", itemFilePath));
         lines.forEach(itemLine -> {
             if (itemLine.matches(".*<Kept>.*")) {
+                String foundBy = itemLine.replaceFirst("\\[.*\\] <", "").replaceFirst(">.*", "");
+                // [23:25:18] <Mf Soso> <Kept> (unique) Magefist (75) | Light Gauntlets | Defense: 25 | Durability: 11 of 18 | Required Strength: 45 | Required Level: 23 | +1 to Fire Skills | +20% Faster Cast Rate | Adds 1-6 fire damage | +25% Enhanced Defense | +10 Defense | Regenerate Mana 25%
                 items.add(Item.builder()
                         .name(itemLine.replaceAll(".*<Kept> ", ""))
+                        .foundBy(foundBy)
                         .timestamp(parseTimeFromToday(itemLine))
                         .build());
             }

@@ -15,4 +15,6 @@ public class Item {
 
     private Timestamp timestamp;
 
+    private String foundBy;
+
 }

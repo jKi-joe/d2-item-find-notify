@@ -43,7 +43,8 @@ public class ItemServiceTest {
     @Test
     public void create() {
         Item item = Item.builder()
-                .name("(unique) Magefist (75) | Light Gauntlets | Defense: 25 | Durability: 11 of 18 | Required Strength: 45 | Required Level: 23 | +1 to Fire Skills | +20% Faster Cast Rate | Adds 1-6 fire damage | +25% Enhanced Defense | +10 Defense | Regenerate Mana 25%")
+                .foundBy("Soso 1")
+                .name("(unique) Magefist (75) | Light Gauntlets")
                 .timestamp(Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 25, 18))))
                 .build();
         Item created = itemService.create(item);
@@ -54,11 +55,13 @@ public class ItemServiceTest {
     @Test
     public void findById() {
         Item mage1 = Item.builder()
-                .name("(unique) Magefist (75) | Light Gauntlets | Defense: 25 | Durability: 11 of 18 | Required Strength: 45 | Required Level: 23 | +1 to Fire Skills | +20% Faster Cast Rate | Adds 1-6 fire damage | +25% Enhanced Defense | +10 Defense | Regenerate Mana 25%")
+                .foundBy("Soso 1")
+                .name("(unique) Magefist (75) | Light Gauntlets")
                 .timestamp(Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 25, 18))))
                 .build();
         Item fRuby = Item.builder()
-                .name("(normal) Flawless Ruby (1) | Can be Inserted into Socketed Items |  | Weapons: Adds 10-16 fire damage | Armor: +31 to Life | Helms: +31 to Life | Shields: Fire Resist +28% |  | Required Level: 15 {Cubing 2}")
+                .foundBy("Soso 2")
+                .name("(normal) Flawless Ruby (1) | Can be Inserted into Socketed Items")
                 .timestamp(Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 30, 45))))
                 .build();
         itemService.create(fRuby);
@@ -72,27 +75,40 @@ public class ItemServiceTest {
     }
 
     @Test
-    public void findByNameAndTimestamp() {
+    public void findByTimestampAndFoundBy() {
         Item mage1 = Item.builder()
-                .name("(unique) Magefist (75) | Light Gauntlets | Defense: 25 | Durability: 11 of 18 | Required Strength: 45 | Required Level: 23 | +1 to Fire Skills | +20% Faster Cast Rate | Adds 1-6 fire damage | +25% Enhanced Defense | +10 Defense | Regenerate Mana 25%")
+                .foundBy("Soso 1")
+                .name("(unique) Magefist (75) | Light Gauntlets")
                 .timestamp(Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 25, 18))))
                 .build();
         Item fRuby = Item.builder()
-                .name("(normal) Flawless Ruby (1) | Can be Inserted into Socketed Items |  | Weapons: Adds 10-16 fire damage | Armor: +31 to Life | Helms: +31 to Life | Shields: Fire Resist +28% |  | Required Level: 15 {Cubing 2}")
+                .foundBy("Soso 2")
+                .name("(normal) Flawless Ruby (1) | Can be Inserted into Socketed Items")
                 .timestamp(Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 30, 45))))
                 .build();
         Item mage2 = Item.builder()
-                .name("(unique) Magefist (75) | Light Gauntlets | Defense: 25 | Durability: 11 of 18 | Required Strength: 45 | Required Level: 23 | +1 to Fire Skills | +20% Faster Cast Rate | Adds 1-6 fire damage | +25% Enhanced Defense | +10 Defense | Regenerate Mana 25%")
-                .timestamp(Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 25, 17))))
+                .name("(unique) Magefist (75) | Light Gauntlets")
+                .foundBy("Soso 1")
+                .timestamp(Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 25, 19))))
                 .build();
-        itemService.create(fRuby);
-        itemService.create(mage2);
-        Item created = itemService.create(mage1);
-        assertFalse(Strings.isNullOrEmpty(created.getId()));
+        Item mage3 = Item.builder()
+                .name("(unique) Magefist (75) | Light Gauntlets")
+                .foundBy("Soso 2")
+                .timestamp(Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 25, 19))))
+                .build();
 
-        Item foundItem = itemService.findItemByTimestamp(mage1.getTimestamp());
-        assertEq(foundItem, mage1);
-        assertEquals(created.getId(), foundItem.getId());
+        itemService.create(fRuby);
+        itemService.create(mage1);
+        Item createdMage2 = itemService.create(mage2);
+        Item createdMage3 = itemService.create(mage3);
+
+        Item foundItem1 = itemService.findItemByTimestampAndFoundBy(mage2.getTimestamp(), mage2.getFoundBy());
+        assertEq(foundItem1, createdMage2);
+        assertEquals(createdMage2.getId(), foundItem1.getId());
+
+        Item foundItem2 = itemService.findItemByTimestampAndFoundBy(mage3.getTimestamp(), mage3.getFoundBy());
+        assertEq(foundItem2, createdMage3);
+        assertEquals(createdMage3.getId(), foundItem2.getId());
     }
 
     @Test
@@ -106,5 +122,6 @@ public class ItemServiceTest {
 
     private void assertEq(final Item item, final Item created) {
         assertEquals(item.getTimestamp(), created.getTimestamp());
+        assertEquals(item.getFoundBy(), created.getFoundBy());
     }
 }

@@ -25,4 +25,6 @@ public class ItemDto {
 
     private Timestamp timestamp;
 
+    private String foundBy;
+
 }
