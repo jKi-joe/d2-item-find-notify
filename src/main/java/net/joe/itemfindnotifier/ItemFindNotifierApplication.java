@@ -7,6 +7,7 @@ import net.joe.itemfindnotifier.config.ApplicationConfiguration;
 import net.joe.itemfindnotifier.config.ApplicationProperties;
 import net.joe.itemfindnotifier.data.Item;
 import net.joe.itemfindnotifier.service.DbPopulator;
+import net.joe.itemfindnotifier.service.DiscordNotifier;
 import net.joe.itemfindnotifier.service.ItemParser;
 import net.joe.itemfindnotifier.service.ItemService;
 
@@ -44,7 +45,7 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
 
     private final ItemService itemService;
 
-    private final OkHttpClient client = new OkHttpClient();
+    private final DiscordNotifier discordNotifier;
 
     private final DbPopulator dbPopulator;
 
@@ -104,17 +105,7 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
                                             String randomPrefix = applicationProperties.getMessagePrefixes().get(new Random().nextInt(applicationProperties.getMessagePrefixes().size()));
                                             String newItemMessage = String.format("%s%s%s", randomPrefix, "\\n", item.getName());
                                             newItemMessage = newItemMessage.replaceAll("\\|", "\\\\n");
-                                            try {
-                                                Response execute = client.newCall(new Request.Builder()
-                                                        .url(applicationProperties.getDiscordWebhookUrl())
-                                                        .post(RequestBody.create(MediaType.parse("application/json"), String.valueOf("{\"content\": \"" + newItemMessage + "\"}")))
-                                                        .build()).execute();
-                                                if (execute.code() != 204) {
-                                                    log.error(String.format("Could not send to discord since response on webhook was '%s'", execute.code()));
-                                                }
-                                            } catch (IOException e) {
-                                                throw new RuntimeException(e);
-                                            }
+                                            discordNotifier.send(newItemMessage);
                                         });
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
