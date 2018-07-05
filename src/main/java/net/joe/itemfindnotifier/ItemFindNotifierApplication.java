@@ -102,7 +102,8 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
                                             itemService.create(item);
 
                                             String randomPrefix = applicationProperties.getMessagePrefixes().get(new Random().nextInt(applicationProperties.getMessagePrefixes().size()));
-                                            String newItemMessage = String.format("%s '%s'", randomPrefix, item.getName());
+                                            String newItemMessage = String.format("%s%s%s", randomPrefix, "\\n", item.getName());
+                                            newItemMessage = newItemMessage.replaceAll("\\|", "\\\\n");
                                             try {
                                                 Response execute = client.newCall(new Request.Builder()
                                                         .url(applicationProperties.getDiscordWebhookUrl())
