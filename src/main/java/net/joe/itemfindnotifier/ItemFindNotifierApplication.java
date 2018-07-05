@@ -83,7 +83,7 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
                                             if (itemService.findItemByTimestampAndFoundBy(item.getTimestamp(), item.getFoundBy()) == null) {
                                                 return true;
                                             } else {
-                                                log.info(String.format("No notification sent for item '%s' found by '%s' at '%s' sent, since it is already in DB", item.getName(), item.getFoundBy(), item.getTimestamp()));
+                                                log.debug(String.format("No notification sent for item '%s' found by '%s' at '%s' sent, since it is already in DB", item.getName(), item.getFoundBy(), item.getTimestamp()));
                                                 return false;
                                             }
 
@@ -91,7 +91,7 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
                                         .filter(item -> {
                                             for (String filter : filters) {
                                                 if (item.getName().contains(filter)) {
-                                                    log.info(String.format("No notification sent for item '%s'  was filtered since filter '%s' applies", item.getName(), filter));
+                                                    log.debug(String.format("No notification sent for item '%s'  was filtered since filter '%s' applies", item.getName(), filter));
                                                     return false;
                                                 }
                                             }
@@ -110,7 +110,7 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
                                                         .post(RequestBody.create(MediaType.parse("application/json"), String.valueOf("{\"content\": \"" + newItemMessage + "\"}")))
                                                         .build()).execute();
                                                 if (execute.code() != 204) {
-                                                    log.error(String.format("Response on webhook was '%s'", execute.code()));
+                                                    log.error(String.format("Could not send to discord since response on webhook was '%s'", execute.code()));
                                                 }
                                             } catch (IOException e) {
                                                 throw new RuntimeException(e);
