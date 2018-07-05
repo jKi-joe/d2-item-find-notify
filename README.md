@@ -23,5 +23,5 @@ Get notified on discord about anything that your kolbot bot finds.
     1. Edit the prefix messages (see file comments for more info)
          * e.g. `net.joe.messagePrefixes=Awwwww yeah a new item: ,Awesome I found: ,Cool I just got: `
 1. [Open a command line in the folder where the jar is](https://www.howtogeek.com/howto/windows-vista/stupid-geek-tricks-open-a-command-prompt-from-the-desktop-right-click-menu/)
-1. Enter `java -jar item-find-notifier-0.0.2.jar`
+1. Enter `java -jar item-find-notifier-0.0.3.jar`
 1. Enjoy :)
