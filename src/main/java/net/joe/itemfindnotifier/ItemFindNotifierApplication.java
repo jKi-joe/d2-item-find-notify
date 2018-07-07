@@ -6,10 +6,8 @@ import lombok.extern.log4j.Log4j2;
 import net.joe.itemfindnotifier.config.ApplicationConfiguration;
 import net.joe.itemfindnotifier.config.ApplicationProperties;
 import net.joe.itemfindnotifier.data.Item;
-import net.joe.itemfindnotifier.service.DbPopulator;
 import net.joe.itemfindnotifier.service.DiscordNotifier;
 import net.joe.itemfindnotifier.service.ItemParser;
-import net.joe.itemfindnotifier.service.ItemService;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -43,12 +41,7 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
 
     private final ItemParser itemParser;
 
-    private final ItemService itemService;
-
     private final DiscordNotifier discordNotifier;
-
-    private final DbPopulator dbPopulator;
-
 
     public static void main(String[] args) {
         SpringApplication.run(ItemFindNotifierApplication.class, args);
@@ -56,8 +49,7 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
 
     @Override
     public void run(final String... args) throws IOException, InterruptedException {
-        dbPopulator.populate();
-
+        itemParser.initLastFileReadUntil(applicationProperties.getItemFileDirectory() + applicationProperties.getItemFileName());
         WatchService watchService = null;
         try {
             watchService = FileSystems.getDefault().newWatchService();
@@ -81,15 +73,6 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
                                 items
                                         .stream()
                                         .filter(item -> {
-                                            if (itemService.findItemByTimestampAndFoundBy(item.getTimestamp(), item.getFoundBy()) == null) {
-                                                return true;
-                                            } else {
-                                                log.debug(String.format("No notification sent for item '%s' found by '%s' at '%s' sent, since it is already in DB", item.getName(), item.getFoundBy(), item.getTimestamp()));
-                                                return false;
-                                            }
-
-                                        })
-                                        .filter(item -> {
                                             for (String filter : filters) {
                                                 if (item.getName().contains(filter)) {
                                                     log.debug(String.format("No notification sent for item '%s'  was filtered since filter '%s' applies", item.getName(), filter));
@@ -99,8 +82,7 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
                                             return true;
                                         })
                                         .forEach(item -> {
-                                            log.info(String.format("New item: '%s' found at '%s'", item.getName(), item.getTimestamp()));
-                                            itemService.create(item);
+                                            log.info(String.format("New item: '%s'", item.getName()));
 
                                             String randomPrefix = applicationProperties.getMessagePrefixes().get(new Random().nextInt(applicationProperties.getMessagePrefixes().size()));
                                             String newItemMessage = String.format("%s%s%s", randomPrefix, "\\n", item.getName());

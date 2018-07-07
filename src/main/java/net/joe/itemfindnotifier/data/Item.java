@@ -13,8 +13,4 @@ public class Item {
 
     private String name;
 
-    private Timestamp timestamp;
-
-    private String foundBy;
-
 }
