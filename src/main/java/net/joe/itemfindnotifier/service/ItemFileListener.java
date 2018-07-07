@@ -2,39 +2,81 @@ package net.joe.itemfindnotifier.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import net.joe.itemfindnotifier.config.ApplicationProperties;
 import net.joe.itemfindnotifier.data.Item;
-
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.*;
 import java.util.List;
-import java.util.Set;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class ItemFileListener {
 
-    private final ItemParser itemParser;
-
-    private final ItemService itemService;
-
     private final ApplicationProperties applicationProperties;
 
-//    @Override
-//    public void onChange(final Set<ChangedFiles> changeSet) {
-//        changeSet.forEach(changedFiles -> changedFiles.getFiles().forEach(changedFile -> {
-//            if (changedFile.getFile() != null && changedFile.getFile().getName().equals(applicationProperties.getItemFileName())) {
-//                try {
-//                    List<Item> items = itemParser.parseItems(changedFile.getFile().getPath());
-//                    items.forEach(item -> log.debug(String.format("New item '%s' from '%s'", item.getName(), item.getTimestamp())));
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        }));
-//    }
+    private final ItemParser itemParser;
+
+    private final DiscordNotifier discordNotifier;
+
+    public void start() throws IOException, InterruptedException {
+        WatchService watchService = null;
+        try {
+            watchService = FileSystems.getDefault().newWatchService();
+            Path folderToWatch = Paths.get(applicationProperties.getItemFileDirectory());
+            folderToWatch.register(watchService,
+                    StandardWatchEventKinds.ENTRY_CREATE,
+                    StandardWatchEventKinds.ENTRY_MODIFY);
+            WatchKey watchKey;
+            List<String> filters = applicationProperties.getFilters();
+            log.info(String.format("Watching directory '%s' for file '%s' now", applicationProperties.getItemFileDirectory(), applicationProperties.getItemFileName()));
+            while ((watchKey = watchService.take()) != null) {
+                watchKey.pollEvents().forEach(watchEvent -> {
+                    Object context = watchEvent.context();
+                    if (context instanceof Path) {
+                        Path path = ((Path) context);
+                        File file = path.toFile();
+                        if (file.getName().equals(applicationProperties.getItemFileName())) {
+                            try {
+                                List<Item> items = itemParser.parseItems(applicationProperties.getItemFileDirectory() + file.getName());
+                                items
+                                        .stream()
+                                        .filter(item -> {
+                                            for (String filter : filters) {
+                                                if (item.getName().contains(filter)) {
+                                                    log.debug(String.format("No notification sent for item '%s'  was filtered since filter '%s' applies", item.getName(), filter));
+                                                    return false;
+                                                }
+                                            }
+                                            return true;
+                                        })
+                                        .forEach(item -> {
+                                            log.info(String.format("New item: '%s'", item.getName()));
+
+                                            String randomPrefix = applicationProperties.getMessagePrefixes().get(new Random().nextInt(applicationProperties.getMessagePrefixes().size()));
+                                            String newItemMessage = String.format("%s%s%s", randomPrefix, "\\n", item.getName());
+                                            newItemMessage = newItemMessage.replaceAll("\\|", "\\\\n");
+                                            discordNotifier.send(newItemMessage);
+                                        });
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+                });
+                watchKey.reset();
+            }
+
+
+        } finally {
+            if (watchService != null) {
+                watchService.close();
+            }
+        }
+    }
 
 }
