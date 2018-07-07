@@ -6,6 +6,7 @@ import net.joe.itemfindnotifier.config.ApplicationConfiguration;
 import net.joe.itemfindnotifier.config.ApplicationProperties;
 import net.joe.itemfindnotifier.service.ItemFileListener;
 import net.joe.itemfindnotifier.service.ItemParser;
+import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,7 +27,9 @@ public class ItemFindNotifierApplication implements CommandLineRunner {
     private final ItemFileListener itemFileListener;
 
     public static void main(String[] args) {
-        SpringApplication.run(ItemFindNotifierApplication.class, args);
+        SpringApplication springApplication = new SpringApplication(ItemFindNotifierApplication.class);
+        springApplication.setBannerMode(Banner.Mode.OFF);
+        springApplication.run(args);
     }
 
     @Override
