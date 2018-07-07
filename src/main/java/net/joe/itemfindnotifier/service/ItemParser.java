@@ -5,18 +5,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
+@Scope("singleton")
 public class ItemParser {
 
-    private long lastFileReadUntil = -1;
+    private AtomicLong lastFileReadUntil = new AtomicLong(-1);
 
     public void initLastFileReadUntil(String itemFilePath) throws IOException {
         LineIterator lineIterator = initFileIterator(itemFilePath);
@@ -29,25 +32,31 @@ public class ItemParser {
         } finally {
             LineIterator.closeQuietly(lineIterator);
         }
-        lastFileReadUntil = totalLines;
+        lastFileReadUntil.set(totalLines);
     }
 
     List<String> parseItems(String itemFilePath) throws IOException {
         log.debug(String.format("Reading file from path '%s'", itemFilePath));
         List<String> newItems = Lists.newArrayList();
         LineIterator lineIterator = initFileIterator(itemFilePath);
-        long linesRead = 0;
         try {
+            long linesRead = 0;
             while (lineIterator.hasNext()) {
                 String itemLine = lineIterator.nextLine();
-                if (lastFileReadUntil != -1 && linesRead >= lastFileReadUntil) {
+                if (lastFileReadUntil.get() != -1 && linesRead >= lastFileReadUntil.get()) {
                     if (itemLine.matches(".*<Kept>.*")) {
-                        newItems.add(itemLine.replaceAll(".*<Kept> ", ""));
+                        String e = itemLine.replaceAll(".*<Kept> ", "");
+                        newItems.add(e);
                     }
                 }
                 linesRead++;
             }
-            lastFileReadUntil = linesRead;
+            // If nothing is read, then prevent starting over
+            // This might happen if during a file writing a file is flushed first,
+            // then nothing will be read
+            if (linesRead != 0) {
+                lastFileReadUntil.set(linesRead);
+            }
         } finally {
             LineIterator.closeQuietly(lineIterator);
         }

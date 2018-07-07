@@ -27,9 +27,7 @@ public class ItemFileListener {
         try {
             watchService = FileSystems.getDefault().newWatchService();
             Path folderToWatch = Paths.get(applicationProperties.getItemFileDirectory());
-            folderToWatch.register(watchService,
-                    StandardWatchEventKinds.ENTRY_CREATE,
-                    StandardWatchEventKinds.ENTRY_MODIFY);
+            folderToWatch.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
             WatchKey watchKey;
             List<String> filters = applicationProperties.getFilters();
             log.info(String.format("Watching directory '%s' for file '%s' now", applicationProperties.getItemFileDirectory(), applicationProperties.getItemFileName()));
