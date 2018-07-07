@@ -2,6 +2,8 @@
 
 Get notified on discord about anything that your kolbot bot finds.
 
+[![Build Status](https://travis-ci.com/jKi-joe/d2-item-find-notify.svg?branch=master)](https://travis-ci.com/jKi-joe/d2-item-find-notify)
+
 # Prerequist
 1. [Java](https://java.com/de/download/) installed
 1. [Your own discor server](https://support.discordapp.com/hc/en-us/articles/204849977-How-do-I-create-a-server-)
