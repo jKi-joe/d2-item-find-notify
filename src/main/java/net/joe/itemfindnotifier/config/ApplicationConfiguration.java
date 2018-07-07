@@ -1,11 +1,10 @@
 package net.joe.itemfindnotifier.config;
 
+import okhttp3.OkHttpClient;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-
-import okhttp3.OkHttpClient;
 
 @Configuration
 @EnableConfigurationProperties(ApplicationProperties.class)

@@ -2,18 +2,11 @@ package net.joe.itemfindnotifier.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import net.joe.itemfindnotifier.config.ApplicationProperties;
-
+import okhttp3.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 @Service
 @RequiredArgsConstructor

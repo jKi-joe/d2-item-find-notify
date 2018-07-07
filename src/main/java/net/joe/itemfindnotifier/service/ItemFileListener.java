@@ -3,7 +3,6 @@ package net.joe.itemfindnotifier.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.joe.itemfindnotifier.config.ApplicationProperties;
-import net.joe.itemfindnotifier.data.Item;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -42,23 +41,23 @@ public class ItemFileListener {
                         File file = path.toFile();
                         if (file.getName().equals(applicationProperties.getItemFileName())) {
                             try {
-                                List<Item> items = itemParser.parseItems(applicationProperties.getItemFileDirectory() + file.getName());
+                                List<String> items = itemParser.parseItems(applicationProperties.getItemFileDirectory() + file.getName());
                                 items
                                         .stream()
                                         .filter(item -> {
                                             for (String filter : filters) {
-                                                if (item.getName().contains(filter)) {
-                                                    log.debug(String.format("No notification sent for item '%s'  was filtered since filter '%s' applies", item.getName(), filter));
+                                                if (item.contains(filter)) {
+                                                    log.debug(String.format("No notification sent for item '%s'  was filtered since filter '%s' applies", item, filter));
                                                     return false;
                                                 }
                                             }
                                             return true;
                                         })
                                         .forEach(item -> {
-                                            log.info(String.format("New item: '%s'", item.getName()));
+                                            log.info(String.format("New item: '%s'", item));
 
                                             String randomPrefix = applicationProperties.getMessagePrefixes().get(new Random().nextInt(applicationProperties.getMessagePrefixes().size()));
-                                            String newItemMessage = String.format("%s%s%s", randomPrefix, "\\n", item.getName());
+                                            String newItemMessage = String.format("%s%s%s", randomPrefix, "\\n", item);
                                             newItemMessage = newItemMessage.replaceAll("\\|", "\\\\n");
                                             discordNotifier.send(newItemMessage);
                                         });

@@ -3,7 +3,6 @@ package net.joe.itemfindnotifier.service;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.joe.itemfindnotifier.data.Item;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.springframework.stereotype.Service;
@@ -33,9 +32,9 @@ public class ItemParser {
         lastFileReadUntil = totalLines;
     }
 
-    public List<Item> parseItems(String itemFilePath) throws IOException {
+    List<String> parseItems(String itemFilePath) throws IOException {
         log.debug(String.format("Reading file from path '%s'", itemFilePath));
-        List<Item> newItems = Lists.newArrayList();
+        List<String> newItems = Lists.newArrayList();
         LineIterator lineIterator = initFileIterator(itemFilePath);
         long linesRead = 0;
         try {
@@ -43,9 +42,7 @@ public class ItemParser {
                 String itemLine = lineIterator.nextLine();
                 if (lastFileReadUntil != -1 && linesRead >= lastFileReadUntil) {
                     if (itemLine.matches(".*<Kept>.*")) {
-                        newItems.add(Item.builder()
-                                .name(itemLine.replaceAll(".*<Kept> ", ""))
-                                .build());
+                        newItems.add(itemLine.replaceAll(".*<Kept> ", ""));
                     }
                 }
                 linesRead++;
