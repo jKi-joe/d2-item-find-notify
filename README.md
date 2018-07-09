@@ -25,7 +25,6 @@ Get notified on discord about anything that your kolbot bot finds.
          * e.g. `itemfindnotifier.filters=Flawless Ruby,(magic) Ring,Sol Rune`
     1. Edit the prefix messages (see file comments for more info)
          * e.g. `itemfindnotifier.messagePrefixes=Awwwww yeah a new item: ,Awesome I found: ,Cool I just got: `
-1. [Open a command line in the folder where the jar is](https://www.howtogeek.com/howto/windows-vista/stupid-geek-tricks-open-a-command-prompt-from-the-desktop-right-click-menu/)
 1. Double click the `start-item-find-notifier.bat`
-     1. For non windows users: Enter `java -jar item-find-notifier.jar`
+     1. For non windows users: Use `java -jar item-find-notifier.jar` 
 1. Enjoy :)
