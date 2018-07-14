@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -53,11 +52,7 @@ public class ItemFileListener {
                                         })
                                         .forEach(item -> {
                                             log.info(String.format("New item: '%s'", item));
-
-                                            String randomPrefix = applicationProperties.getMessagePrefixes().get(new Random().nextInt(applicationProperties.getMessagePrefixes().size()));
-                                            String newItemMessage = String.format("%s%s%s", randomPrefix, "\\n", item);
-                                            newItemMessage = newItemMessage.replaceAll("\\|", "\\\\n");
-                                            discordNotifier.send(newItemMessage);
+                                            discordNotifier.send(item);
                                         });
                             } catch (IOException e) {
                                 throw new RuntimeException(e);

@@ -30,6 +30,10 @@ public class ApplicationProperties {
 
     @Getter
     @Setter
+    private String messageSuffix;
+
+    @Getter
+    @Setter
     private List<String> filters;
 
 }
