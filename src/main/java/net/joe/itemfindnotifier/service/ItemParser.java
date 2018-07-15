@@ -44,8 +44,8 @@ public class ItemParser {
             while (lineIterator.hasNext()) {
                 String itemLine = lineIterator.nextLine();
                 if (lastFileReadUntil.get() != -1 && linesRead >= lastFileReadUntil.get()) {
-                    if (itemLine.matches(".*<Kept>.*")) {
-                        String e = itemLine.replaceAll(".*<Kept> ", "");
+                    if (itemLine.matches(".*<.*Kept>.*")) {
+                        String e = itemLine.replaceAll(".*<.*Kept> ", "");
                         newItems.add(e);
                     }
                 }
